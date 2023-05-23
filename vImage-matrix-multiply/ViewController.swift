@@ -208,15 +208,27 @@ class ViewController: UIViewController {
         let animator = UIViewPropertyAnimator(duration: 0.3,
                                               timingParameters: UICubicTimingParameters(animationCurve: .easeOut))
         animator.addAnimations {
-            if UIDevice.current.orientation.isLandscape {
-                NSLayoutConstraint.deactivate(self.portraitConstraints)
-                NSLayoutConstraint.activate(self.landscapeConstraints)
-            } else if UIDevice.current.orientation.isPortrait {
-                NSLayoutConstraint.deactivate(self.landscapeConstraints)
-                NSLayoutConstraint.activate(self.portraitConstraints)
-            } else {
-                // do nothing.
+            let keyWindow: UIWindow? = UIApplication.shared.windows.first { $0.isKeyWindow }
+            if let interfaceOrientation: UIInterfaceOrientation = keyWindow?.windowScene?.interfaceOrientation {
+                if interfaceOrientation.isLandscape {
+                    NSLayoutConstraint.deactivate(self.portraitConstraints)
+                    NSLayoutConstraint.activate(self.landscapeConstraints)
+                } else {
+                    NSLayoutConstraint.deactivate(self.landscapeConstraints)
+                    NSLayoutConstraint.activate(self.portraitConstraints)
+                }
             }
+            
+            // UIDeviceOrientation contains faceUp & faceDown, so recommend to use UIInterfaceOrientation instead.
+//            if UIDevice.current.orientation.isLandscape {
+//                NSLayoutConstraint.deactivate(self.portraitConstraints)
+//                NSLayoutConstraint.activate(self.landscapeConstraints)
+//            } else if UIDevice.current.orientation.isPortrait {
+//                NSLayoutConstraint.deactivate(self.landscapeConstraints)
+//                NSLayoutConstraint.activate(self.portraitConstraints)
+//            } else {
+//                // do nothing.
+//            }
 //            self.view.layoutIfNeeded()
         }
         animator.startAnimation()
